@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>השיטה של אלכס הורמוזי: מאסטר-קלאס לאיקומרס</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Heebo', 'sans-serif'],
+                    },
+                    colors: {
+                        hormozi: {
+                            gold: '#D4AF37',
+                            dark: '#1a1a1a',
+                            light: '#f4f4f4',
+                            accent: '#C5A028'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1f2937;
+        }
+        
+        /* Chart Container Styling - MANDATORY */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+
+        .tab-active {
+            border-bottom: 4px solid #D4AF37;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .equation-part {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .equation-part:hover {
+            transform: scale(1.05);
+            color: #D4AF37;
+        }
+    </style>
+
+    <!-- Placeholder Comments Required by Instructions -->
+    <!-- Chosen Palette: Gold and Dark Grey (Hormozi Branding Style) - Minimalist, high contrast, professional. -->
+    
+    <!-- Application Structure Plan: 
+         The app is designed as a modular learning dashboard. 
+         1. Foundations (Mindset/Principles): Sets the stage.
+         2. Value Equation (The Core): Interactive math visualization to teach the formula deeply.
+         3. Grand Slam Offer (Implementation): Simulation to apply the theory to Ecom.
+         4. Marketing & Copy (Execution): Templates and actionable tactics for ads.
+         5. Scale & FAQ (Growth): Advanced diagnostics and rapid-fire answers.
+         Navigation is tab-based for instant access without page reloads. 
+         Data flows from static definitions to interactive charts (Offer Score) to reinforce learning through doing.
+    -->
+    
+    <!-- Visualization & Content Choices:
+         1. Value Equation: Text-based interactive formula. Goal: Break down complex logic. Interaction: Click parts to reveal tactics.
+         2. Offer Strength Chart (Chart.js Radar): Visualizes the balance of price, scarcity, bonuses, etc. Goal: Show how 'Grand Slam' offers differ from commodities.
+         3. Funnel/Ad Flow (CSS Flowchart): Linear representation of the ad journey. Goal: Structure creative.
+         4. Interactive FAQ: Accordion style. Goal: Organize the massive list of questions into consumable bites.
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-gray-50 font-sans text-right">
+
+    <!-- Navigation -->
+    <nav class="bg-hormozi-dark text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-black text-hormozi-gold tracking-wider">HORMOZI<span class="text-white text-lg font-normal ml-2">MASTERY</span></span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="flex items-baseline space-x-4 space-x-reverse" id="nav-container">
+                        <!-- Nav items injected by JS -->
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button id="mobile-menu-btn" class="bg-gray-800 p-2 rounded-md text-gray-400 hover:text-white focus:outline-none">
+                        ☰
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-gray-900" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-right" id="mobile-nav-container">
+                <!-- Mobile Nav items injected by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
+        
+        <!-- Welcome / Intro Header -->
+        <div id="header-section" class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-black text-gray-900 mb-4">
+                הפיצוח של <span class="text-hormozi-gold">איקומרס</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                המדריך האסטרטגי המלא ליישום עקרונות ה-$100M של אלכס הורמוזי בחנות האינטרנטית שלך. 
+                מבניית הצעה שאי אפשר לסרב לה, דרך קופירייטינג ממיר, ועד לסקייל מחושב.
+            </p>
+        </div>
+
+        <!-- Dynamic Content Sections -->
+        <div id="content-area">
+            <!-- Views will be rendered here by JS -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">מבוסס על עקרונות ה-$100M Leads & Offers של אלכס הורמוזי. נוצר ככלי לימודי אינטראקטיבי.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- State Management ---
+        const state = {
+            currentTab: 'foundations',
+            offerSimulator: {
+                price: 5,
+                value: 3,
+                scarcity: 2,
+                urgency: 2,
+                bonuses: 1,
+                guarantee: 1
+            }
+        };
+
+        // --- Data Sources ---
+        
+        const tabs = [
+            { id: 'foundations', label: 'יסודות ומיינדסט' },
+            { id: 'value_equation', label: 'משוואת הערך' },
+            { id: 'grand_slam', label: 'Grand Slam Offer' },
+            { id: 'copy_creative', label: 'קופי וקריאייטיב' },
+            { id: 'scale_science', label: 'סקייל ומדע' },
+            { id: 'faq', label: 'שאלות ותשובות' }
+        ];
+
+        const valueEquationData = {
+            outcome: {
+                title: "תוצאה חלומית (Dream Outcome)",
+                desc: "מה הלקוח באמת רוצה? באיקומרס זה לא 'מוצר', אלא הסטטוס/הנוחות שהמוצר נותן.",
+                tactics: [
+                    "השתמש בתמונות 'אחרי' באיכות גבוהה.",
+                    "מכור זהות: 'הייה השף שתמיד רצית להיות'.",
+                    "הבטחה ברורה: 'שיער חלק תוך 10 דקות'."
+                ]
+            },
+            likelihood: {
+                title: "סיכוי נתפס להצלחה (Perceived Likelihood)",
+                desc: "כמה הלקוח מאמין שזה יעבוד *עבורו*?",
+                tactics: [
+                    "הוכחה חברתית (Reviews) עם תמונות אמיתיות.",
+                    "אחריות חזקה: 'החזר כספי מלא אם לא אהבת'.",
+                    "סרטוני הדגמה (User Generated Content) שמראים קלות שימוש."
+                ]
+            },
+            time: {
+                title: "עיכוב בזמן (Time Delay)",
+                desc: "כמה זמן עד שאקבל את הערך? המטרה: 0.",
+                tactics: [
+                    "משלוח מהיר (חינם מעל X).",
+                    "בונוס דיגיטלי מיידי עם הרכישה (מדריך PDF).",
+                    "חווית Unboxing שמרגישה כמו מתנה."
+                ]
+            },
+            effort: {
+                title: "מאמץ והקרבה (Effort & Sacrifice)",
+                desc: "כמה קשה זה לשימוש? המטרה: קלות קיצונית.",
+                tactics: [
+                    "הוראות שימוש פשוטות ב-3 שלבים.",
+                    "מוצר שמגיע מורכב (Ready to use).",
+                    "'אנחנו עושים את העבודה בשבילך' (Bundles)."
+                ]
+            }
+        };
+
+        const copyTemplates = [
+            {
+                title: "נוסחת דף מוצר מנצח",
+                steps: [
+                    "כותרת: ההבטחה הגדולה (תוצאה).",
+                    "תת-כותרת: איך זה קורה ולמה זה שונה.",
+                    "ויז'ואל: וידאו/GIF שמראה את המוצר בפעולה.",
+                    "בולטים: יתרונות רגשיים (לא רק פיצ'רים).",
+                    "הוכחה: ביקורות ולוגואים.",
+                    "הצעה: המחיר, הבונוסים, והערך הכולל.",
+                    "סיכון: אחריות ברזל.",
+                    "CTA: כפתור בולט וברור."
+                ]
+            },
+            {
+                title: "מבנה מודעת וידאו (Hook-Retain-Reward)",
+                steps: [
+                    "Hook (0-3 שניות): שבירת תבנית ויזואלית. שאלה מפתיעה או הצהרה נועזת.",
+                    "Problem/Agitation: הצגת הכאב שהלקוח חווה כרגע.",
+                    "Solution: הצגת המוצר כפתרון הקסם.",
+                    "Proof: הדגמה מהירה או עדות.",
+                    "Offer & CTA: מה מקבלים ומה לעשות עכשיו."
+                ]
+            }
+        ];
+
+        const faqData = [
+            { q: "מה ההבדל בין שיווק, מכירה, מיתוג והפצה?", a: "שיווק גורם לאנשים להתעניין. מכירה הופכת מתעניינים לקונים. מיתוג הוא המוניטין שנשאר (מה אומרים עליך כשאתה לא בחדר). הפצה היא הצינור שדרכו המוצר מגיע ללקוח." },
+            { q: "מה הסדר הנכון: מוצר -> הצעה -> קופי -> טראפיק?", a: "בדיוק. טראפיק לא יציל הצעה גרועה, וקופי מעולה לא יציל מוצר שאף אחד לא רוצה." },
+            { q: "איך מעלים ערך בלי לשנות מוצר?", a: "משנים את ה-Offer. מוסיפים בונוסים, משפרים את תנאי התשלום, נותנים אחריות מטורפת, ומקצרים את זמן האספקה." },
+            { q: "למה אנשים קונים דברים שהם לא צריכים?", a: "אנשים קונים בגלל סטטוס, שייכות, או רצון לפתור רגש שלילי (פחד, שעמום). הרכישה היא רגשית, ההצדקה היא לוגית." },
+            { q: "איך בונים בידול בלי להמציא את הגלגל?", a: "תעשה את מה שכולם עושים, אבל תתקן את ה'ויתורים' שהלקוח רגיל לעשות (למשל: אותה חולצה, אבל לא מתכווצת בכביסה)." },
+            { q: "איך מטפלים בהתנגדויות לפני שהן עולות?", a: "מכניסים את הטיפול בהתנגדות לתוך הקופי וה-FAQ. אם אנשים חוששים שזה מסובך, כותבים 'כל כך פשוט שאפילו ילד יכול להפעיל את זה'." },
+            { q: "מה המדד היחיד שקובע הצלחה שיווקית?", a: "רווח. לא לייקים, לא חשיפות, ואפילו לא הכנסה. כמה כסף נשאר בכיס אחרי כל ההוצאות." }
+        ];
+
+        // --- Component Rendering Functions ---
+
+        function renderNav() {
+            const container = document.getElementById('nav-container');
+            const mobileContainer = document.getElementById('mobile-nav-container');
+            
+            let html = '';
+            let mobileHtml = '';
+            
+            tabs.forEach(tab => {
+                const activeClass = state.currentTab === tab.id ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white';
+                const mobileActiveClass = state.currentTab === tab.id ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white';
+                
+                html += `<button onclick="switchTab('${tab.id}')" class="${activeClass} px-3 py-2 rounded-md text-sm font-medium transition-colors">${tab.label}</button>`;
+                mobileHtml += `<button onclick="switchTab('${tab.id}')" class="${mobileActiveClass} block w-full text-right px-3 py-2 rounded-md text-base font-medium">${tab.label}</button>`;
+            });
+
+            container.innerHTML = html;
+            mobileContainer.innerHTML = mobileHtml;
+        }
+
+        function switchTab(tabId) {
+            state.currentTab = tabId;
+            renderNav();
+            renderContent();
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+            window.scrollTo(0,0);
+        }
+
+        function renderContent() {
+            const contentArea = document.getElementById('content-area');
+            let html = '';
+
+            switch (state.currentTab) {
+                case 'foundations':
+                    html = renderFoundations();
+                    break;
+                case 'value_equation':
+                    html = renderValueEquation();
+                    break;
+                case 'grand_slam':
+                    html = renderGrandSlam();
+                    break;
+                case 'copy_creative':
+                    html = renderCopyCreative();
+                    break;
+                case 'scale_science':
+                    html = renderScaleScience();
+                    break;
+                case 'faq':
+                    html = renderFAQ();
+                    break;
+            }
+            contentArea.innerHTML = html;
+            
+            // Post-render initialization for Charts
+            if (state.currentTab === 'grand_slam') {
+                initOfferChart();
+            }
+            if (state.currentTab === 'scale_science') {
+                initScaleChart();
+            }
+        }
+
+        // --- Module 1: Foundations ---
+        function renderFoundations() {
+            return `
+                <div class="space-y-8 animate-fade-in">
+                    <div class="bg-white p-6 rounded-xl shadow-md border-r-4 border-hormozi-gold">
+                        <h2 class="text-2xl font-bold mb-4">יסודות ומיינדסט: המפתח להצלחה</h2>
+                        <p class="text-gray-600 mb-4">
+                            לפני שנצלול לטקטיקות, חייבים להבין את החוקים הבלתי כתובים של עסקים מצליחים. 
+                            הטעות הגדולה ביותר היא "לעבוד קשה" על הדברים הלא נכונים. הורמוזי מלמד אותנו להחליף עבודה קשה בעבודה חכמה (מנוף).
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Card 1 -->
+                        <div class="bg-white p-6 rounded-xl shadow card-hover">
+                            <div class="text-4xl mb-4">🐜 vs 🏗️</div>
+                            <h3 class="text-xl font-bold mb-2">עבודה קשה מול חכמה</h3>
+                            <p class="text-gray-600">
+                                <strong>עבודה קשה:</strong> לחפור בור עם כפית. (מתגמל מאמץ, לא תוצאה).<br>
+                                <strong>עבודה חכמה:</strong> להביא טרקטור. (מתגמל תוצאה, מינימום מאמץ).<br>
+                                <span class="text-hormozi-gold font-bold">באיקומרס:</span> אל תארוז חבילות בעצמך. בנה מערכת שילוח אוטומטית. אל תמכור אחד-אחד, בנה דף מכירה שמוכר למיליונים במקביל.
+                            </p>
+                        </div>
+                        
+                        <!-- Card 2 -->
+                        <div class="bg-white p-6 rounded-xl shadow card-hover">
+                            <div class="text-4xl mb-4">📣 vs 🤝</div>
+                            <h3 class="text-xl font-bold mb-2">שיווק מול מכירות</h3>
+                            <p class="text-gray-600">
+                                <strong>שיווק:</strong> לגרום לאנשים להכיר אותך ולהתעניין.<br>
+                                <strong>מכירות:</strong> לגרום להם לשלם.<br>
+                                <span class="text-hormozi-gold font-bold">החוק:</span> שיווק טוב הופך את המכירה למיותרת (Superfluous). אם ההצעה שלך מדהימה והקופי מדויק, הלקוח כבר "מכור" לפני שהוא מגיע לעגלת הקניות.
+                            </p>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="bg-white p-6 rounded-xl shadow card-hover">
+                            <div class="text-4xl mb-4">🧠</div>
+                            <h3 class="text-xl font-bold mb-2">חוק ה-100</h3>
+                            <p class="text-gray-600">
+                                רוב האנשים נכשלים כי הם לא עושים מספיק. <br>
+                                <strong>הכלל:</strong> תעשה 100 פעולות ראשוניות (100 פניות, 100$ ביום בפרסום, 100 דקות של כתיבת קופי) לפני שאתה שופט אם משהו עובד.
+                            </p>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div class="bg-white p-6 rounded-xl shadow card-hover">
+                            <div class="text-4xl mb-4">👑</div>
+                            <h3 class="text-xl font-bold mb-2">הצעה (Offer) היא המלך</h3>
+                            <p class="text-gray-600">
+                                הטעות הכי גדולה: למכור "סחורה" (Commodity).<br>
+                                המטרה: למכור "הצעה".<br>
+                                מוצר = אייפון. הצעה = אייפון + מגן + אוזניות + ביטוח + משלוח חינם במחיר מיוחד.
+                                <br><strong>ההצעה קובעת את הרווחיות שלך.</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Module 2: Value Equation ---
+        function renderValueEquation() {
+            return `
+                <div class="space-y-8">
+                    <div class="text-center space-y-4">
+                        <h2 class="text-3xl font-black">משוואת הערך (The Value Equation)</h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto">
+                            זהו הלב של השיטה. כדי לגבות יותר כסף ולהביא יותר מכירות, עליך למקסם את החלק העליון (המונה) ולמזער את החלק התחתון (המכנה).
+                            <br><span class="text-sm text-gray-500">לחץ על כל חלק במשוואה כדי ללמוד איך ליישם אותו באיקומרס.</span>
+                        </p>
+                    </div>
+
+                    <!-- Interactive Equation Board -->
+                    <div class="bg-gray-900 text-white p-8 rounded-2xl shadow-2xl mx-auto max-w-4xl text-center select-none">
+                        <div class="flex flex-col md:flex-row items-center justify-center text-xl md:text-3xl font-mono gap-4">
+                            <div class="flex items-center">
+                                <span class="text-4xl md:text-5xl font-bold text-hormozi-gold mr-4">ערך ($) = </span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="flex gap-4 border-b-2 border-white pb-2 mb-2 w-full justify-center">
+                                    <div onclick="showEquationDetail('outcome')" class="equation-part p-2 rounded hover:bg-gray-800 text-green-400 font-bold" title="לחץ לפרטים">תוצאה חלומית</div>
+                                    <span class="text-gray-400">×</span>
+                                    <div onclick="showEquationDetail('likelihood')" class="equation-part p-2 rounded hover:bg-gray-800 text-green-400 font-bold" title="לחץ לפרטים">סיכוי להצלחה</div>
+                                </div>
+                                <div class="flex gap-4 w-full justify-center">
+                                    <div onclick="showEquationDetail('time')" class="equation-part p-2 rounded hover:bg-gray-800 text-red-400 font-bold" title="לחץ לפרטים">עיכוב בזמן</div>
+                                    <span class="text-gray-400">×</span>
+                                    <div onclick="showEquationDetail('effort')" class="equation-part p-2 rounded hover:bg-gray-800 text-red-400 font-bold" title="לחץ לפרטים">מאמץ והקרבה</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Details Panel -->
+                    <div id="equation-details" class="bg-white p-8 rounded-xl shadow border border-gray-200 min-h-[250px] transition-all">
+                        <div class="text-center text-gray-500 italic">
+                            👈 לחץ על אחד המרכיבים במשוואה למעלה כדי לראות טקטיקות מעשיות
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showEquationDetail(key) {
+            const data = valueEquationData[key];
+            const colorClass = (key === 'outcome' || key === 'likelihood') ? 'text-green-600' : 'text-red-600';
+            const action = (key === 'outcome' || key === 'likelihood') ? 'איך למקסם את זה?' : 'איך למזער את זה?';
+
+            const html = `
+                <div class="animate-fade-in">
+                    <h3 class="text-2xl font-bold mb-2 ${colorClass}">${data.title}</h3>
+                    <p class="text-gray-700 text-lg mb-6 font-medium">${data.desc}</p>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg border-r-4 border-gray-300">
+                        <h4 class="font-bold text-gray-900 mb-3 underline">${action}</h4>
+                        <ul class="space-y-3">
+                            ${data.tactics.map(tactic => `<li class="flex items-start"><span class="ml-2 text-hormozi-gold">➤</span> ${tactic}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="mt-6 bg-yellow-50 p-4 rounded border border-yellow-200">
+                        <h4 class="font-bold text-yellow-800 text-sm mb-1">דוגמה לקופי:</h4>
+                        <p class="italic text-gray-700">
+                           ${generateCopyExample(key)}
+                        </p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('equation-details').innerHTML = html;
+        }
+
+        function generateCopyExample(key) {
+            if (key === 'outcome') return `"תפסיק לחלום על בטן שטוחה. השג אותה תוך 30 יום בלי לוותר על הפיצה."`;
+            if (key === 'likelihood') return `"הצטרף ל-15,000 לקוחות שכבר שינו את חייהם. מדורג 4.9/5 ב-Trustpilot."`;
+            if (key === 'time') return `"הזמן עכשיו וקבל גישה מיידית לאפליקציה בזמן שהחבילה בדרך אליך (משלוח אקספרס)."`;
+            if (key === 'effort') return `"הכל מגיע מוכן ומורכב. פשוט הוצא מהקופסה, לחץ על כפתור אחד, וסיימת."`;
+        }
+
+        // --- Module 3: Grand Slam Offer ---
+        function renderGrandSlam() {
+            return `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow">
+                            <h2 class="text-2xl font-bold mb-4">סימולטור ההצעה (Offer Simulator)</h2>
+                            <p class="text-sm text-gray-600 mb-6">
+                                הצעה רגילה מתחרה על מחיר. Grand Slam Offer מתחרה על ערך. 
+                                הזז את הסליידרים כדי לראות איך אלמנטים שונים משפיעים על "ציון ההצעה" שלך.
+                            </p>
+                            
+                            <!-- Sliders -->
+                            <div class="space-y-4">
+                                ${renderSlider('price', 'מחיר פרימיום (לא זול!)', state.offerSimulator.price)}
+                                ${renderSlider('value', 'ערך הליבה (המוצר עצמו)', state.offerSimulator.value)}
+                                ${renderSlider('bonuses', 'בונוסים ומתנות', state.offerSimulator.bonuses)}
+                                ${renderSlider('scarcity', 'מחסור (Scarcity)', state.offerSimulator.scarcity)}
+                                ${renderSlider('urgency', 'דחיפות (Urgency)', state.offerSimulator.urgency)}
+                                ${renderSlider('guarantee', 'הסרת סיכון (אחריות)', state.offerSimulator.guarantee)}
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h3 class="font-bold text-blue-900">טיפ לרווחיות באיקומרס:</h3>
+                            <p class="text-sm text-blue-800 mt-1">
+                                במקום להוריד מחיר, הוסף בונוסים עם עלות שולית נמוכה וערך נתפס גבוה (למשל: מדריך דיגיטלי, עדיפות בתמיכה, קהילה סגורה). זה מעלה את הערך בלי לפגוע ברווח.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center bg-white p-6 rounded-xl shadow">
+                        <h3 class="text-xl font-bold mb-4 text-gray-700">פרופיל ההצעה שלך</h3>
+                        
+                        <div class="chart-container">
+                            <canvas id="offerChart"></canvas>
+                        </div>
+
+                        <div id="offer-feedback" class="mt-6 text-center font-bold text-xl text-hormozi-gold">
+                            <!-- JS updates this -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tactics for Ecom Offers -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded shadow border-t-4 border-green-500">
+                        <h4 class="font-bold">הבאנדל (Bundle)</h4>
+                        <p class="text-sm text-gray-600">אל תמכור 'סכין'. מכור 'ערכת שף מלאה' (סכין + משחיז + קרש חיתוך + קורס חיתוך). זה הופך השוואת מחירים לבלתי אפשרית.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded shadow border-t-4 border-red-500">
+                        <h4 class="font-bold">Scarcity & Urgency</h4>
+                        <p class="text-sm text-gray-600">מחסור אמיתי: "רק 100 יחידות מיוצרות בחודש". דחיפות: "הבונוסים יורדים מהדף בעוד 24 שעות".</p>
+                    </div>
+                    <div class="bg-white p-4 rounded shadow border-t-4 border-purple-500">
+                        <h4 class="font-bold">Upsell & Downsell</h4>
+                        <p class="text-sm text-gray-600">הלקוח כבר קנה? הוא במצב רוח של בזבוז. הצע לו מיד עוד מאותו דבר ב-20% הנחה, או מוצר משלים. זה רווח נקי.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSlider(key, label, val) {
+            return `
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <label class="text-sm font-medium text-gray-700">${label}</label>
+                        <span class="text-sm text-gray-500" id="val-${key}">${val}</span>
+                    </div>
+                    <input type="range" min="1" max="10" value="${val}" 
+                        oninput="updateSlider('${key}', this.value)"
+                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-hormozi-gold">
+                </div>
+            `;
+        }
+
+        // --- Module 4: Copy & Creative ---
+        function renderCopyCreative() {
+            return `
+                <div class="space-y-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-black mb-2">אומנות השכנוע ($100M Leads)</h2>
+                        <p class="text-gray-600">המטרה: לגרום לזרים מוחלטים להוציא את האשראי. איך עושים את זה? פסיכולוגיה ומבנה.</p>
+                    </div>
+
+                    <!-- Psychology Section -->
+                    <div class="bg-white p-6 rounded-xl shadow">
+                        <h3 class="text-xl font-bold mb-4 border-b pb-2">עקרונות השפעה פסיכולוגיים</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            <div class="p-3 bg-gray-50 rounded">
+                                <span class="text-2xl">😎</span>
+                                <h4 class="font-bold">סטטוס</h4>
+                                <p class="text-sm text-gray-600">אנשים קונים כדי להיראות טוב יותר בעיני אחרים. שדר יוקרה.</p>
+                            </div>
+                            <div class="p-3 bg-gray-50 rounded">
+                                <span class="text-2xl">😱</span>
+                                <h4 class="font-bold">פחד (FOMO)</h4>
+                                <p class="text-sm text-gray-600">הפחד להפסיד הזדמנות חזק יותר מהרצון להרוויח.</p>
+                            </div>
+                            <div class="p-3 bg-gray-50 rounded">
+                                <span class="text-2xl">🏆</span>
+                                <h4 class="font-bold">הוכחה חברתית</h4>
+                                <p class="text-sm text-gray-600">"אם כולם קונים, כנראה שזה טוב".</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Templates Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        ${copyTemplates.map(template => `
+                            <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                <div class="bg-gray-100 px-6 py-4 border-b border-gray-200">
+                                    <h3 class="font-bold text-lg text-gray-800">${template.title}</h3>
+                                </div>
+                                <div class="p-6">
+                                    <ul class="space-y-3">
+                                        ${template.steps.map((step, idx) => `
+                                            <li class="flex items-start">
+                                                <span class="flex-shrink-0 bg-hormozi-gold text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold ml-3 mt-0.5">${idx + 1}</span>
+                                                <span class="text-gray-700 text-sm">${step}</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Ad Tips -->
+                    <div class="bg-hormozi-dark text-white p-6 rounded-xl shadow">
+                        <h3 class="text-xl font-bold text-hormozi-gold mb-3">טיפים לקריאייטיב באיקומרס</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-300">
+                            <li><strong>Hook is Everything:</strong> אם לא עצרת אותם ב-3 שניות, שאר הוידאו לא משנה.</li>
+                            <li><strong>Native Feel:</strong> מודעות טיקטוק צריכות להיראות כמו טיקטוק, לא כמו פרסומת טלוויזיה.</li>
+                            <li><strong>כתוביות:</strong> 80% צופים בלי סאונד. שים כתוביות גדולות וברורות.</li>
+                            <li><strong>CTA ברור:</strong> תגיד להם ללחוץ. "לחץ כאן כדי להזמין עכשיו ב-50% הנחה".</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Module 5: Scale & Science ---
+        function renderScaleScience() {
+            return `
+                <div class="space-y-8">
+                    <div class="bg-white p-6 rounded-xl shadow mb-6">
+                        <h2 class="text-2xl font-bold mb-4">המדע של הסקייל (Scale)</h2>
+                        <p class="text-gray-600 mb-4">
+                            כדי לגדול, אתה חייב להפסיק לנחש ולהתחיל למדוד. "השיטה המדעית" בעסקים:
+                            השערה -> בדיקה -> ניתוח נתונים -> מסקנה -> חזרה.
+                        </p>
+                        <div class="flex flex-wrap gap-4 justify-center my-6">
+                            <div class="bg-green-100 text-green-800 px-4 py-2 rounded-full font-bold">1. זהה את המגבלה (Constraint)</div>
+                            <div class="text-gray-400 self-center">➔</div>
+                            <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-bold">2. בדוק פתרון (Test)</div>
+                            <div class="text-gray-400 self-center">➔</div>
+                            <div class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-bold">3. יישם מערכת (Systemize)</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-xl shadow">
+                            <h3 class="text-xl font-bold mb-4">מתי לוחצים על הגז?</h3>
+                            <p class="text-sm text-gray-500 mb-4">היחס בין עלות רכישה (CPA) לערך חיי לקוח (LTV).</p>
+                            <div class="chart-container">
+                                <canvas id="scaleChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-bold">איך לזהות "שוק רע"?</h3>
+                            <ul class="space-y-2 text-sm text-gray-700 bg-red-50 p-4 rounded-lg border border-red-100">
+                                <li>❌ השוק לא גדל (דועך).</li>
+                                <li>❌ ללקוחות אין כסף (סטודנטים/מובטלים).</li>
+                                <li>❌ קשה להגיע אליהם בפרסום (אין טרגוט ברור).</li>
+                                <li>❌ אין להם כאב דחוף.</li>
+                            </ul>
+
+                            <h3 class="text-xl font-bold mt-6">איך לזהות "שוק מנצח"?</h3>
+                            <ul class="space-y-2 text-sm text-gray-700 bg-green-50 p-4 rounded-lg border border-green-100">
+                                <li>✅ כאב עצום (Massive Pain).</li>
+                                <li>✅ כוח קנייה (Purchasing Power).</li>
+                                <li>✅ קל לאתר אותם (Easy to Target).</li>
+                                <li>✅ השוק צומח (Growing).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Module 6: FAQ ---
+        function renderFAQ() {
+            return `
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="text-3xl font-black text-center mb-8">שאלות ותשובות (FAQ)</h2>
+                    <div class="space-y-4">
+                        ${faqData.map((item, index) => `
+                            <div class="bg-white rounded-lg shadow overflow-hidden">
+                                <button onclick="toggleFAQ(${index})" class="w-full px-6 py-4 text-right flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none">
+                                    <span class="font-bold text-gray-800 text-lg">${item.q}</span>
+                                    <span id="faq-icon-${index}" class="text-hormozi-gold text-xl transform transition-transform duration-200">+</span>
+                                </button>
+                                <div id="faq-ans-${index}" class="hidden px-6 py-4 text-gray-600 border-t border-gray-100 bg-white">
+                                    ${item.a}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleFAQ(index) {
+            const ans = document.getElementById(`faq-ans-${index}`);
+            const icon = document.getElementById(`faq-icon-${index}`);
+            
+            if (ans.classList.contains('hidden')) {
+                ans.classList.remove('hidden');
+                icon.innerText = '−'; // minus
+                icon.classList.add('text-gray-900');
+            } else {
+                ans.classList.add('hidden');
+                icon.innerText = '+';
+                icon.classList.remove('text-gray-900');
+            }
+        }
+
+        // --- Charts Initialization ---
+        
+        function updateSlider(key, val) {
+            state.offerSimulator[key] = parseInt(val);
+            document.getElementById(`val-${key}`).innerText = val;
+            initOfferChart(); // Re-render chart
+        }
+
+        let offerChartInstance = null;
+
+        function initOfferChart() {
+            const ctx = document.getElementById('offerChart');
+            if (!ctx) return;
+
+            // Calculate Score
+            const { price, value, bonuses, scarcity, urgency, guarantee } = state.offerSimulator;
+            // Value Equation Logic roughly: (Value * Guarantee) / Price ... simplified for visual
+            // Let's make a "Grand Slam Score"
+            const totalScore = (value + bonuses + guarantee + scarcity + urgency) - (price * 0.5); 
+            
+            let feedback = "";
+            if (totalScore < 15) feedback = "הצעה חלשה. אתה קומודיטי. 😴";
+            else if (totalScore < 25) feedback = "הצעה סבירה. אפשר למכור. 🙂";
+            else feedback = "GRAND SLAM OFFER! 🚀🔥";
+
+            document.getElementById('offer-feedback').innerText = feedback;
+
+            if (offerChartInstance) {
+                offerChartInstance.destroy();
+            }
+
+            offerChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['ערך', 'בונוסים', 'אחריות', 'דחיפות', 'מחסור', 'מחיר (הפוך)'],
+                    datasets: [{
+                        label: 'ההצעה הנוכחית שלך',
+                        data: [value, bonuses, guarantee, urgency, scarcity, 11-price], // Invert price so outer is better
+                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                        borderColor: 'rgba(212, 175, 55, 1)',
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#D4AF37',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e5e7eb' },
+                            grid: { color: '#e5e7eb' },
+                            pointLabels: { font: { size: 12, family: 'Heebo' }, color: '#374151' },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function initScaleChart() {
+            const ctx = document.getElementById('scaleChart');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['הפסד', 'איזון', 'רווחיות בריאה', 'הדפסת כסף (סקייל)'],
+                    datasets: [
+                        {
+                            label: 'CPA (עלות רכישה)',
+                            data: [50, 40, 30, 20],
+                            backgroundColor: '#ef4444',
+                            stack: 'Stack 0',
+                        },
+                        {
+                            label: 'רווח',
+                            data: [0, 0, 30, 80],
+                            backgroundColor: '#22c55e',
+                            stack: 'Stack 0',
+                        },
+                        {
+                            label: 'LTV (ערך לקוח)',
+                            data: [40, 40, 60, 100], // Line dataset mixed
+                            type: 'line',
+                            borderColor: '#1f2937',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'דולרים ($)' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': $' + context.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Init ---
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Initial Render
+        renderNav();
+        renderContent();
+
+    </script>
+</body>
+</html>
